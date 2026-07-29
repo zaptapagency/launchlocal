@@ -1,0 +1,51 @@
+{
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "nodeVersion": "18.x",
+  "env": {
+    "DATABASE_URL": {
+      "description": "PostgreSQL connection string from Neon"
+    },
+    "BETTER_AUTH_SECRET": {
+      "description": "Secret for Better Auth sessions (generate: openssl rand -hex 32)"
+    },
+    "BETTER_AUTH_URL": {
+      "description": "Your production domain (e.g., https://launchlocal.com)"
+    },
+    "GOOGLE_CLIENT_ID": {
+      "description": "From Google Cloud Console OAuth 2.0 credentials"
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "description": "From Google Cloud Console OAuth 2.0 credentials"
+    },
+    "ANTHROPIC_API_KEY": {
+      "description": "From Anthropic console"
+    },
+    "STRIPE_SECRET_KEY": {
+      "description": "From Stripe dashboard (production key)"
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "description": "From Stripe webhook setup"
+    },
+    "APP_DOMAIN": {
+      "description": "Your production domain"
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/expire-payment-holds",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/send-booking-reminders",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

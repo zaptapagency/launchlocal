@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  PNPM_VERSION: 9.6.0
+  NODE_VERSION: 20
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: launchlocal_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Minimal env for build (no external services in CI)
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/launchlocal_test
+          AUTH_SECRET: test-secret-at-least-32-characters-long
+          MOCK_MODE: '1'
+
+      - name: Run tests
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/launchlocal_test
+          AUTH_SECRET: test-secret-at-least-32-characters-long
+          MOCK_MODE: '1'
+
+      - name: Run e2e tests (mock mode)
+        run: pnpm test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/launchlocal_test
+          AUTH_SECRET: test-secret-at-least-32-characters-long
+          MOCK_MODE: '1'
+
+  lint-db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for raw db. imports outside allowed paths
+        run: |
+          set -e
+          # Fail if db. is imported outside src/db and src/modules
+          VIOLATIONS=$(grep -r "from ['\"]@/db['\"]" src/app src/lib --include="*.ts" --include="*.tsx" || true)
+          if [ ! -z "$VIOLATIONS" ]; then
+            echo "❌ Error: db. imported outside allowed paths"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+          echo "✅ No db. imports in restricted paths"
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level moderate || true

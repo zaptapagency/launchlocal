@@ -1,0 +1,27 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "error",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "info", "debug", "log"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/db/seed.ts", "src/**/__tests__/**/*"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}
