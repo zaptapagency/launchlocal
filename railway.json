@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
-    "startCommand": "sh -c 'echo DATABASE_URL: $DATABASE_URL && echo AUTH_SECRET length: $(echo $AUTH_SECRET | wc -c) && pnpm db:migrate 2>&1 || echo Migration failed with code $? && sleep 2 && pnpm start'",
+    "startCommand": "sh -c 'echo Starting migrations... && node node_modules/.bin/drizzle-kit migrate 2>&1; echo; echo Starting Next.js server... && pnpm start'",
     "healthcheckPath": "/",
     "healthcheckTimeout": 120
   }
