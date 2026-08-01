@@ -1,14 +1,19 @@
 import { defineConfig } from 'drizzle-kit';
-import { getEnv } from './src/lib/config';
 
-const env = getEnv();
+// For drizzle-kit CLI usage, just read DATABASE_URL directly to avoid validation
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  console.error('ERROR: DATABASE_URL environment variable is not set');
+  process.exit(1);
+}
 
 export default defineConfig({
   schema: './src/db/schema.ts',
   out: './src/db/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: databaseUrl,
   },
   verbose: true,
   strict: true,
