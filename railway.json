@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
-    "startCommand": "npx drizzle-kit migrate; pnpm start",
+    "startCommand": "npx drizzle-kit migrate && pnpm start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 120
   }
