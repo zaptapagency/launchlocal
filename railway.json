@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
-    "startCommand": "pnpm db:migrate && pnpm start",
+    "startCommand": "pnpm db:migrate 2>&1; pnpm start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 120
   }
