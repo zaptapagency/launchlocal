@@ -5,8 +5,8 @@
     "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
-    "startCommand": "pnpm start",
-    "healthcheckPath": "/api/booking/services",
-    "healthcheckTimeout": 120
+    "startCommand": "npx drizzle-kit migrate && pnpm start",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 240
   }
 }
