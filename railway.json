@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install && pnpm build"
   },
   "deploy": {
-    "startCommand": "sh -c 'echo Starting migrations... && ./node_modules/.bin/drizzle-kit migrate 2>&1; echo; echo Starting Next.js server... && pnpm start'",
+    "startCommand": "npx drizzle-kit migrate; pnpm start",
     "healthcheckPath": "/",
     "healthcheckTimeout": 120
   }
