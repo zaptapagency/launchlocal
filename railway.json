@@ -7,6 +7,6 @@
   "deploy": {
     "startCommand": "pnpm db:migrate && pnpm start",
     "healthcheckPath": "/",
-    "healthcheckTimeout": 30
+    "healthcheckTimeout": 120
   }
 }
