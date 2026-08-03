@@ -1,8 +1,10 @@
 'use server';
 
 import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { getDb } from '@/db';
 import { getEnv } from './config';
+import * as schema from '@/db/schema';
 
 // Lazy-initialize auth to defer driver initialization until first use
 let authInstance: ReturnType<typeof betterAuth> | null = null;
@@ -14,9 +16,12 @@ export function getAuth() {
     const env = getEnv();
     const db = getDb();
 
-    // Initialize Better Auth with database adapter
+    // Initialize Better Auth with proper Drizzle adapter
     authInstance = betterAuth({
-      database: db,
+      database: drizzleAdapter(db, {
+        provider: 'pg',
+        schema,
+      }),
       appName: 'LaunchLocal',
       baseURL: env.APP_DOMAIN_PUBLIC,
       basePath: '/api/auth',
