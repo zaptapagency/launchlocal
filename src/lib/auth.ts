@@ -1,9 +1,7 @@
 'use server';
 
 import { betterAuth } from 'better-auth';
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from '@/db/schema';
+import { getDb } from '@/db';
 import { getEnv } from './config';
 
 // Lazy-initialize auth to defer driver initialization until first use
@@ -14,18 +12,7 @@ export function getAuth() {
 
   try {
     const env = getEnv();
-
-    // Initialize database connection pool
-    const pool = new Pool({
-      connectionString: env.DATABASE_URL,
-      // Set connection timeout to catch database connectivity issues early
-      connectionTimeoutMillis: 5000,
-      idleTimeoutMillis: 30000,
-      max: 20,
-    });
-
-    // Initialize Drizzle ORM with schema
-    const db = drizzle(pool, { schema });
+    const db = getDb();
 
     // Initialize Better Auth with database adapter
     authInstance = betterAuth({
