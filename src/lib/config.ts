@@ -75,10 +75,5 @@ export function getEnv(): Env {
   return parsedEnv;
 }
 
-// Lazy-export env as a getter to defer validation until first use
-Object.defineProperty(module.exports, 'env', {
-  get() {
-    return getEnv();
-  },
-  enumerable: true,
-});
+// Cache parsed environment for direct access
+export const env = getEnv();
