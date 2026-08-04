@@ -58,3 +58,5 @@ playwright/.auth/
 
 # Drizzle
 src/db/migrations/
+
+.vercel

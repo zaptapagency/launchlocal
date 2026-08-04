@@ -4,7 +4,7 @@ import { env } from './config';
 
 const secret = new TextEncoder().encode(env.AUTH_SECRET);
 
-export interface SessionData {
+export interface SessionData extends Record<string, string | undefined> {
   userId: string;
   email: string;
   name?: string;
